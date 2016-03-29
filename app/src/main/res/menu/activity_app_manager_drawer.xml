@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:checkable="false"
+            android:id="@+id/nav_types"
+            android:icon="@drawable/ic_types"
+            android:title="@string/types_label" />
+        <item
+            android:checkable="false"
+            android:id="@+id/nav_beacons"
+            android:icon="@drawable/ic_beacon"
+            android:title="@string/beacons_label" />
+    </group>
+    <group
+        android:id="@+id/bottomGroup"
+        android:checkableBehavior="single">
+        <item
+            android:checkable="false"
+            android:id="@+id/nav_edit"
+            android:icon="@drawable/ic_edit"
+            android:title="@string/edit" />
+    </group>
+</menu>
