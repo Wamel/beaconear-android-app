@@ -17,8 +17,10 @@ import com.wamel.beaconear.model.User;
  */
 public class FlowManager {
 
-    public static final int TYPE_ACTIVITY_REQUEST_CODE = 1;
-    public static final int APP_ACTIVITY_REQUEST_CODE = 2;
+    public static final int NEW_APP_ACTIVITY_REQUEST_CODE = 1;
+    public static final int NEW_TYPE_ACTIVITY_REQUEST_CODE = 2;
+    public static final int EDITED_APP_ACTIVITY_REQUEST_CODE = 3;
+    public static final int EDITED_TYPE_ACTIVITY_REQUEST_CODE = 4;
 
     private final Activity mCurrentActivity;
     private String mAccessToken;
@@ -28,29 +30,41 @@ public class FlowManager {
         this.mAccessToken = builder.mAccessToken;
     }
 
-    public void startTypeFormActivity(RegisteredApplication application, User user) {
-        Intent newTypeIntent = new Intent(mCurrentActivity, TypeFormActivity.class);
-        newTypeIntent.putExtra("accessToken", mAccessToken);
-        mCurrentActivity.startActivityForResult(newTypeIntent, TYPE_ACTIVITY_REQUEST_CODE);
+    public void startNewApplicationActivity() {
+        Intent newAppIntent = new Intent(mCurrentActivity, ApplicationFormActivity.class);
+        newAppIntent.putExtra("accessToken", mAccessToken);
+        mCurrentActivity.startActivityForResult(newAppIntent, NEW_APP_ACTIVITY_REQUEST_CODE);
     }
 
-    public void startTypeFormActivity(RegisteredApplication application, User user, Type type) {
+    public void startAppEditionActivity(RegisteredApplication application, User user) {
+        Intent newAppIntent = new Intent(mCurrentActivity, ApplicationFormActivity.class);
+        newAppIntent.putExtra("accessToken", mAccessToken);
+        newAppIntent.putExtra("user", user);
+        newAppIntent.putExtra("application", application);
+        mCurrentActivity.startActivityForResult(newAppIntent, EDITED_APP_ACTIVITY_REQUEST_CODE);
+    }
+
+    public void startNewTypeFormActivity(RegisteredApplication application, User user) {
+        Intent newTypeIntent = new Intent(mCurrentActivity, TypeFormActivity.class);
+        newTypeIntent.putExtra("accessToken", mAccessToken);
+        newTypeIntent.putExtra("user", user);
+        newTypeIntent.putExtra("application", application);
+        mCurrentActivity.startActivityForResult(newTypeIntent, NEW_TYPE_ACTIVITY_REQUEST_CODE);
+    }
+
+    public void startTypeEditionActivity(RegisteredApplication application, User user, Type type) {
         Intent editTypeIntent = new Intent(mCurrentActivity, TypeFormActivity.class);
         editTypeIntent.putExtra("accessToken", mAccessToken);
+        editTypeIntent.putExtra("user", user);
+        editTypeIntent.putExtra("application", application);
         editTypeIntent.putExtra("type", type);
-        mCurrentActivity.startActivityForResult(editTypeIntent, TYPE_ACTIVITY_REQUEST_CODE);
+        mCurrentActivity.startActivityForResult(editTypeIntent, EDITED_TYPE_ACTIVITY_REQUEST_CODE);
     }
 
     public void startBeaconSearchActivity() {
         Intent newTypeIntent = new Intent(mCurrentActivity, BeaconSearchActivity.class);
         newTypeIntent.putExtra("accessToken", mAccessToken);
         mCurrentActivity.startActivity(newTypeIntent);
-    }
-
-    public void startNewApplicationActivity() {
-        Intent newAppIntent = new Intent(mCurrentActivity, ApplicationFormActivity.class);
-        newAppIntent.putExtra("accessToken", mAccessToken);
-        mCurrentActivity.startActivityForResult(newAppIntent, APP_ACTIVITY_REQUEST_CODE);
     }
 
     public void startAppManagerActivity(RegisteredApplication application, User user) {
@@ -65,13 +79,6 @@ public class FlowManager {
         appTypesIntent.putExtra("application", application);
         appTypesIntent.putExtra("user", user);
         mCurrentActivity.startActivity(appTypesIntent);
-    }
-
-    public void startAppEditionActivity(RegisteredApplication application, User user) {
-        Intent newAppIntent = new Intent(mCurrentActivity, ApplicationFormActivity.class);
-        newAppIntent.putExtra("accessToken", mAccessToken);
-        newAppIntent.putExtra("application", application);
-        mCurrentActivity.startActivityForResult(newAppIntent, APP_ACTIVITY_REQUEST_CODE);
     }
 
     public static class Builder {

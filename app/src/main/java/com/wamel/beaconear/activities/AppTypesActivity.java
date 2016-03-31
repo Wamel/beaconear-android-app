@@ -9,11 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.EditText;
 
 import com.wamel.beaconear.R;
 import com.wamel.beaconear.adapters.TypesAdapter;
-import com.wamel.beaconear.callbacks.TypeSelectedCallback;
+import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.core.FlowManager;
 import com.wamel.beaconear.model.RegisteredApplication;
 import com.wamel.beaconear.model.Type;
@@ -27,7 +26,6 @@ public class AppTypesActivity extends AppCompatActivity {
     private FlowManager mFlowManager;
 
     private RecyclerView mTypesRecyclerView;
-    private EditText mTypeNameEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class AppTypesActivity extends AppCompatActivity {
     }
 
     private void populateTypesRecyclerView() {
-        TypesAdapter adapter = new TypesAdapter(mApplication.getTypes(), new TypeSelectedCallback() {
+        TypesAdapter adapter = new TypesAdapter(mApplication.getTypes(), new SelectionCallback<Type>() {
             @Override
             public void onSelected(Type type) {
                 startTypeFormForEditing(type);
@@ -74,33 +72,59 @@ public class AppTypesActivity extends AppCompatActivity {
     }
 
     private void startTypeForm() {
-        mFlowManager.startTypeFormActivity(mApplication, mUser);
+        mFlowManager.startNewTypeFormActivity(mApplication, mUser);
     }
 
     private void startTypeFormForEditing(Type type) {
-        mFlowManager.startTypeFormActivity(mApplication, mUser, type);
+        mFlowManager.startTypeEditionActivity(mApplication, mUser, type);
     }
 
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == FlowManager.TYPE_ACTIVITY_REQUEST_CODE) {
+        if(requestCode == FlowManager.NEW_TYPE_ACTIVITY_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
                 Type type = (Type) data.getSerializableExtra("type");
-                showSnackBar(type.getName(), mApplication.getName());
+                showNewTypeMessage(type.getName(), mApplication.getName());
+            }
+        }
+        if(requestCode == FlowManager.EDITED_TYPE_ACTIVITY_REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                Type type = (Type) data.getSerializableExtra("type");
+                showEditedTypeMessage(type.getName());
             }
         }
     }
 
-    private void showSnackBar(String typeName, String appName) {
+    private void showNewTypeMessage(String typeName, String appName) {
         String congratsMessage = getString(R.string.new_type_congrats_message);
         congratsMessage = congratsMessage.replace("-typeName-", typeName);
         congratsMessage = congratsMessage.replace("-appName-", appName);
-        Snackbar.make(mTypesRecyclerView, congratsMessage, Snackbar.LENGTH_LONG)
+        showSnackBar(congratsMessage);
+    }
+
+    private void showEditedTypeMessage(String typeName) {
+        String congratsMessage = getString(R.string.edited_type_congrats_message);
+        congratsMessage = congratsMessage.replace("-typeName-", typeName);
+        showSnackBar(congratsMessage);
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar.make(mTypesRecyclerView, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
+
 }

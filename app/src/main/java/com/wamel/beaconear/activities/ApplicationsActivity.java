@@ -10,17 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.wamel.beaconear.R;
 import com.wamel.beaconear.adapters.ApplicationsAdapter;
-import com.wamel.beaconear.callbacks.ApplicationSelectedCallback;
+import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.core.BeaconearAPI;
 import com.wamel.beaconear.core.FlowManager;
 import com.wamel.beaconear.model.RegisteredApplication;
 import com.wamel.beaconear.model.User;
-import com.wamel.beaconear.utils.LayoutUtil;
 
 import java.util.List;
 
@@ -80,9 +77,9 @@ public class ApplicationsActivity extends AppCompatActivity {
     }
 
     private void populateApplicationsList(List<RegisteredApplication> registeredApplications) {
-        ApplicationsAdapter adapter = new ApplicationsAdapter(registeredApplications, new ApplicationSelectedCallback() {
+        ApplicationsAdapter adapter = new ApplicationsAdapter(registeredApplications, new SelectionCallback<RegisteredApplication>() {
             @Override
-            public void onSelected(final RegisteredApplication application) {
+            public void onSelected(RegisteredApplication application) {
                 startAppManagerActivity(application);
             }
         });
@@ -123,18 +120,22 @@ public class ApplicationsActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == FlowManager.APP_ACTIVITY_REQUEST_CODE) {
+        if(requestCode == FlowManager.NEW_APP_ACTIVITY_REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
                 RegisteredApplication application = (RegisteredApplication) data.getSerializableExtra("application");
-                showSnackBar(application.getName());
+                showNewAppMessage(application.getName());
             }
         }
     }
 
-    private void showSnackBar(String text) {
+    private void showNewAppMessage(String appName) {
         String congratsMessage = getString(R.string.new_app_congrats_message);
-        congratsMessage = congratsMessage.replace("-appName-", text);
-        Snackbar.make(mApplicationsRecyclerView, congratsMessage, Snackbar.LENGTH_LONG)
+        congratsMessage = congratsMessage.replace("-appName-", appName);
+        showSnackBar(congratsMessage);
+    }
+
+    private void showSnackBar(String message) {
+        Snackbar.make(mApplicationsRecyclerView, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 }

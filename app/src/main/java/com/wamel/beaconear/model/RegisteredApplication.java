@@ -56,4 +56,12 @@ public class RegisteredApplication implements Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public boolean hasIconUrl() {
+        return iconUrl != null && !iconUrl.isEmpty();
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
 }

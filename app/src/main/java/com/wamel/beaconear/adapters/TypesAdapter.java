@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wamel.beaconear.R;
-import com.wamel.beaconear.callbacks.TypeSelectedCallback;
+import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.model.Type;
 
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.List;
 public class TypesAdapter extends RecyclerView.Adapter<TypesAdapter.ViewHolder> {
 
     private final List<Type> mTypes;
-    private final TypeSelectedCallback mCallback;
+    private final SelectionCallback<Type> mCallback;
 
-    public TypesAdapter(List<Type> types, TypeSelectedCallback callback) {
+    public TypesAdapter(List<Type> types, SelectionCallback<Type> callback) {
         mTypes = types;
         mCallback = callback;
     }

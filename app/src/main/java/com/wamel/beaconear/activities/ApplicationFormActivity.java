@@ -12,16 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 
+import com.squareup.picasso.Picasso;
 import com.wamel.beaconear.R;
+import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.model.RegisteredApplication;
+import com.wamel.beaconear.utils.MessagesUtil;
 
 public class ApplicationFormActivity extends AppCompatActivity {
 
     private EditText mAppNameEditText;
     private EditText mAppDescriptionEditText;
     private Switch mActiveSwitch;
+    private ImageView mAppIconImageView;
+
     private RegisteredApplication mApplication;
 
     @Override
@@ -31,6 +37,23 @@ public class ApplicationFormActivity extends AppCompatActivity {
         getActivityParameters();
         initializeToolbar();
         initializeControls();
+        if(isEdition()) {
+            setTitle(getString(R.string.title_activity_edit_app));
+            fillData();
+        }
+    }
+
+    private void fillData() {
+        mAppNameEditText.setText(mApplication.getName());
+        mAppDescriptionEditText.setText(mApplication.getDescription());
+        mActiveSwitch.setChecked(mApplication.isActive());
+        if(mApplication.hasIconUrl()) {
+            Picasso.with(this).load(mApplication.getIconUrl()).into(mAppIconImageView);
+        }
+    }
+
+    private boolean isEdition() {
+        return mApplication != null;
     }
 
     private void getActivityParameters() {
@@ -58,29 +81,6 @@ public class ApplicationFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initializeControls() {
-
-        mAppNameEditText = (EditText) findViewById(R.id.appNameEditText);
-        mAppDescriptionEditText = (EditText) findViewById(R.id.appDescriptionEditText);
-        mActiveSwitch = (Switch) findViewById(R.id.activeSwitch);
-        mActiveSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    mActiveSwitch.setText(getString(R.string.active));
-                } else {
-                    mActiveSwitch.setText(R.string.inactive);
-                }
-            }
-        });
-
-        if(mApplication != null) {
-            mAppNameEditText.setText(mApplication.getName());
-            mAppDescriptionEditText.setText(mApplication.getDescription());
-            mActiveSwitch.setChecked(mApplication.isActive());
-        }
-    }
-
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -95,15 +95,60 @@ public class ApplicationFormActivity extends AppCompatActivity {
         }
     }
 
+    private void initializeControls() {
+
+        mAppNameEditText = (EditText) findViewById(R.id.appNameEditText);
+        mAppDescriptionEditText = (EditText) findViewById(R.id.appDescriptionEditText);
+        mActiveSwitch = (Switch) findViewById(R.id.activeSwitch);
+        mActiveSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mActiveSwitch.setText(getString(R.string.active));
+                } else {
+                    mActiveSwitch.setText(R.string.inactive);
+                }
+            }
+        });
+        mAppIconImageView = (ImageView) findViewById(R.id.appIconImage);
+        mAppIconImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showImageInputDialog();
+            }
+        });
+    }
+
+    private void showImageInputDialog() {
+        MessagesUtil.showInputDialog(this, getString(R.string.app_icon_url_input_title), new SelectionCallback<String>() {
+            @Override
+            public void onSelected(String selected) {
+                setApplicationIconUrl(selected);
+            }
+        });
+    }
+
+    private void setApplicationIconUrl(String iconUrl) {
+        //TODO post a applications
+        mApplication.setIconUrl(iconUrl);
+        Picasso.with(this).load(mApplication.getIconUrl()).into(mAppIconImageView);
+    }
+
     private void submitForm() {
         if(validInputs()) {
-            RegisteredApplication application = new RegisteredApplication();
-            application.setName(mAppNameEditText.getText().toString());
-            application.setDescription(mAppDescriptionEditText.getText().toString());
-            application.setActive(mActiveSwitch.isChecked());
-
+            RegisteredApplication applicationResult = new RegisteredApplication();
+            if(isEdition()) {
+                mApplication.setName(mAppNameEditText.getText().toString());
+                mApplication.setDescription(mAppDescriptionEditText.getText().toString());
+                mApplication.setActive(mActiveSwitch.isChecked());
+                applicationResult = mApplication;
+            } else {
+                applicationResult.setName(mAppNameEditText.getText().toString());
+                applicationResult.setDescription(mAppDescriptionEditText.getText().toString());
+                applicationResult.setActive(mActiveSwitch.isChecked());
+            }
             //TODO Post a applications
-            finishWithAppResult(application);
+            finishWithAppResult(applicationResult);
         }
     }
 

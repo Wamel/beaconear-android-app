@@ -16,9 +16,11 @@
     </string>
     <string name="title_activity_applications">My Apps</string>
     <string name="title_activity_new_app">New application</string>
+    <string name="title_activity_edit_app">Edit application</string>
     <string name="title_activity_app_manager">App management suite</string>
     <string name="title_activity_app_types">App types</string>
     <string name="title_activity_new_type">New type</string>
+    <string name="title_activity_edit_type">Edit type</string>
     <string name="title_activity_registered_beacons">App beacons</string>
     <string name="title_activity_beacon_search">Scanning beacons</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -32,12 +34,22 @@
     <string name="edited_app_congrats_message">Congrats! Your app -appName- was successfully modified.</string>
 
     <string name="new_type_congrats_message">Congrats! The type -typeName- was registered to -appName-.</string>
-
+    <string name="edited_type_congrats_message">Congrats! The type -typeName- was successfully edited.</string>
 
     <string name="done">Submit</string>
     <string name="edit">Edit</string>
     <string name="types_label">Types</string>
     <string name="beacons_label">Beacons</string>
 
+    <string name="public_key_label">Public key:</string>
+    <string name="public_key_hint">Use this key in your implementations of Beaconear SDK to receive data</string>
+
+    <string name="private_key_label">Private key:</string>
+    <string name="private_key_hint">Use this key in your implementations of Beaconear SDK to add and edit data</string>
+
     <string name="refresh_message">Refresh</string>
+    <string name="app_icon_url_input_title">Url input</string>
+    <string name="dialog_positive">OK</string>
+    <string name="dialog_negative">CANCEL</string>
+    <string name="app_icon_hint">Tap to edit</string>
 </resources>

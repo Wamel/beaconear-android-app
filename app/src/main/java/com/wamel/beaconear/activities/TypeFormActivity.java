@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +33,14 @@ public class TypeFormActivity extends AppCompatActivity {
         initializeToolbar();
         getActivityParameters();
         initializeControls();
+        if(isEdition()) {
+            setTitle(getString(R.string.title_activity_edit_type));
+            fillData();
+        }
+    }
+
+    private void fillData() {
+            mTypeNameEditText.setText(mType.getName());
     }
 
     @Override
@@ -60,10 +66,6 @@ public class TypeFormActivity extends AppCompatActivity {
 
     private void initializeControls() {
         mTypeNameEditText = (EditText) findViewById(R.id.typeNameEditText);
-
-        if(isEdition()) {
-            mTypeNameEditText.setText(mType.getName());
-        }
     }
 
     private boolean isEdition() {
@@ -73,6 +75,15 @@ public class TypeFormActivity extends AppCompatActivity {
     private void initializeToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     private void getActivityParameters() {

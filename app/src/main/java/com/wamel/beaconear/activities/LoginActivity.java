@@ -27,6 +27,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.wamel.beaconear.R;
@@ -64,15 +66,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private Activity mActivity;
+    private ImageView mSuccessImage;
+    private ScrollView mLoginView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setTitle(getString(R.string.action_sign_in));
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
+        mLoginView = (ScrollView) findViewById(R.id.login_form);
+        mSuccessImage = (ImageView) findViewById(R.id.tickImage);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -269,6 +276,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         finish();
     }
 
+    private void hideLoginLayout() {
+        mLoginView.setVisibility(View.GONE);
+    }
+
+    private void showSuccessImage() {
+        mSuccessImage.setVisibility(View.VISIBLE);
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -311,6 +326,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             LayoutUtil.showRegularLayout(mActivity);
             if (success) {
+                hideLoginLayout();
+                showSuccessImage();
                 finish();
                 startApplicationsActivity(mEmail);
             } else {
@@ -325,5 +342,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             LayoutUtil.showRegularLayout(mActivity);
         }
     }
+
 }
 

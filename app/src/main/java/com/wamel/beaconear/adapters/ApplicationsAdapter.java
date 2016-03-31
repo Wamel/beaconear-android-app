@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wamel.beaconear.R;
-import com.wamel.beaconear.callbacks.ApplicationSelectedCallback;
+import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.model.RegisteredApplication;
 
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
 public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapter.ViewHolder> {
 
     private List<RegisteredApplication> mApplications;
-    private ApplicationSelectedCallback mCallback;
+    private SelectionCallback<RegisteredApplication> mCallback;
 
-    public ApplicationsAdapter(List<RegisteredApplication> applications, ApplicationSelectedCallback callback) {
+    public ApplicationsAdapter(List<RegisteredApplication> applications, SelectionCallback<RegisteredApplication> callback) {
         this.mApplications = applications;
         this.mCallback = callback;
     }
