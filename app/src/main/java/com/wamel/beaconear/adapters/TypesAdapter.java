@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wamel.beaconear.R;
+import com.wamel.beaconear.callbacks.LongSelectionCallback;
 import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.model.Type;
 
@@ -19,10 +20,12 @@ public class TypesAdapter extends RecyclerView.Adapter<TypesAdapter.ViewHolder> 
 
     private final List<Type> mTypes;
     private final SelectionCallback<Type> mCallback;
+    private final LongSelectionCallback<Type> mLongSelectionCallback;
 
-    public TypesAdapter(List<Type> types, SelectionCallback<Type> callback) {
+    public TypesAdapter(List<Type> types, SelectionCallback<Type> callback, LongSelectionCallback<Type> longSelectionCallback) {
         mTypes = types;
         mCallback = callback;
+        mLongSelectionCallback = longSelectionCallback;
     }
 
     @Override
@@ -63,7 +66,13 @@ public class TypesAdapter extends RecyclerView.Adapter<TypesAdapter.ViewHolder> 
                     mCallback.onSelected(mType);
                 }
             });
-
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mLongSelectionCallback.onSelected(mType, v);
+                    return true;
+                }
+            });
             mTypeName = (TextView) itemView.findViewById(R.id.typeName);
             mSeparator = itemView.findViewById(R.id.separator);
         }

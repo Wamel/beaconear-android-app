@@ -21,10 +21,12 @@
         <item name="android:textSize">@dimen/large_text</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="regular_bold_text">
         <item name="android:textSize">@dimen/regular_text</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="small_text">
         <item name="android:textSize">@dimen/small_text</item>
     </style>
@@ -32,6 +34,11 @@
     <style name="regular_button">
         <item name="android:background">@drawable/button</item>
         <item name="android:textSize">@dimen/regular_text</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="title_text">
+        <item name="android:textSize">@dimen/title_text</item>
         <item name="android:textColor">@color/white</item>
     </style>
 </resources>

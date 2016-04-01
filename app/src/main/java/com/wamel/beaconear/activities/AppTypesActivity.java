@@ -1,17 +1,22 @@
 package com.wamel.beaconear.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 
 import com.wamel.beaconear.R;
 import com.wamel.beaconear.adapters.TypesAdapter;
+import com.wamel.beaconear.callbacks.LongSelectionCallback;
 import com.wamel.beaconear.callbacks.SelectionCallback;
 import com.wamel.beaconear.core.FlowManager;
 import com.wamel.beaconear.model.RegisteredApplication;
@@ -22,10 +27,13 @@ public class AppTypesActivity extends AppCompatActivity {
 
     private RegisteredApplication mApplication;
     private User mUser;
+    private Type mSelectedType;
 
     private FlowManager mFlowManager;
 
     private RecyclerView mTypesRecyclerView;
+    private View mSelectedTypeView;
+    private Drawable mRegularRowBackGround;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +49,22 @@ public class AppTypesActivity extends AppCompatActivity {
         populateTypesRecyclerView();
     }
 
-    private void populateTypesRecyclerView() {
-        TypesAdapter adapter = new TypesAdapter(mApplication.getTypes(), new SelectionCallback<Type>() {
-            @Override
-            public void onSelected(Type type) {
-                startTypeFormForEditing(type);
-            }
-        });
-        mTypesRecyclerView.setAdapter(adapter);
+    private void initializeToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar != null) {
+            toolbar.setContentInsetsAbsolute(0, 0);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+        View editView = getLayoutInflater().inflate(R.layout.toolbar_edition_layout, null);
+        ActionBar.LayoutParams layout = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+        getSupportActionBar().setCustomView(editView, layout);
     }
 
     private void getActivityParameters() {
@@ -71,26 +87,69 @@ public class AppTypesActivity extends AppCompatActivity {
         mTypesRecyclerView.setHasFixedSize(true);
     }
 
+    private void populateTypesRecyclerView() {
+
+        SelectionCallback<Type> selectionCallback = new SelectionCallback<Type>() {
+            @Override
+            public void onSelected(Type type) {
+
+            }
+        };
+
+        LongSelectionCallback<Type> longSelectionCallback = new LongSelectionCallback<Type>() {
+            @Override
+            public void onSelected(Type selected, View view) {
+                showEditionMenu();
+                showViewSelection(selected, view);
+            }
+        };
+
+        TypesAdapter adapter = new TypesAdapter(mApplication.getTypes(), selectionCallback, longSelectionCallback);
+        mTypesRecyclerView.setAdapter(adapter);
+    }
+
+    private void showViewSelection(Type selected, View view) {
+        if(selectedRowChanged(selected)) {
+            if(isRowSelected()) {
+                setPreviousSelectedRowOriginalState();
+            }
+            mSelectedType = selected;
+            mSelectedTypeView = view;
+            markRowAsSelected();
+        } else {
+            undoRowSelection();
+        }
+    }
+
+    private boolean selectedRowChanged(Type selected) {
+        return (mSelectedType == null) || !mSelectedType.getName().equals(selected.getName());
+    }
+
+    private void markRowAsSelected() {
+
+        mRegularRowBackGround = mSelectedTypeView.getBackground();
+        mSelectedTypeView.setBackgroundColor(ContextCompat.getColor(this, R.color.light_blue));
+    }
+
+    private void setPreviousSelectedRowOriginalState() {
+        mSelectedTypeView.setBackground(mRegularRowBackGround);
+    }
+
+    private boolean isRowSelected() {
+        return mSelectedTypeView != null;
+    }
+
+    private void showEditionMenu() {
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
     private void startTypeForm() {
         mFlowManager.startNewTypeFormActivity(mApplication, mUser);
     }
 
     private void startTypeFormForEditing(Type type) {
         mFlowManager.startTypeEditionActivity(mApplication, mUser, type);
-    }
-
-    private void initializeToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
     }
 
     @Override
@@ -127,4 +186,28 @@ public class AppTypesActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isRowSelected()) {
+            undoRowSelection();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void undoRowSelection() {
+        mSelectedType = null;
+        mSelectedTypeView = null;
+        getSupportActionBar().setDisplayShowCustomEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mSelectedTypeView.setBackground(mRegularRowBackGround);
+    }
+
+    public void editClicked(View view) {
+        startTypeFormForEditing(mSelectedType);
+    }
+
+    public void deleteClicked(View view) {
+
+    }
 }

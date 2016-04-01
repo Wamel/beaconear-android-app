@@ -16,8 +16,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".activities.LoginActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,6 +50,10 @@
         <activity
             android:name=".activities.AppTypesActivity"
             android:label="@string/title_activity_app_types"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.TypeManagerActivity"
+            android:label="@string/title_activity_type_manager"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

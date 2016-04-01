@@ -38,6 +38,7 @@
 
     <string name="done">Submit</string>
     <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
     <string name="types_label">Types</string>
     <string name="beacons_label">Beacons</string>
 
@@ -52,4 +53,5 @@
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">CANCEL</string>
     <string name="app_icon_hint">Tap to edit</string>
+    <string name="title_activity_type_manager">TypeManagerActivity</string>
 </resources>
