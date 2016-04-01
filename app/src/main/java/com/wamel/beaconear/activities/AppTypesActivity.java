@@ -12,7 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.AnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.LinearLayout;
 
 import com.wamel.beaconear.R;
 import com.wamel.beaconear.adapters.TypesAdapter;
@@ -22,6 +24,7 @@ import com.wamel.beaconear.core.FlowManager;
 import com.wamel.beaconear.model.RegisteredApplication;
 import com.wamel.beaconear.model.Type;
 import com.wamel.beaconear.model.User;
+import com.wamel.beaconear.utils.AnimationsUtil;
 
 public class AppTypesActivity extends AppCompatActivity {
 
@@ -92,15 +95,19 @@ public class AppTypesActivity extends AppCompatActivity {
         SelectionCallback<Type> selectionCallback = new SelectionCallback<Type>() {
             @Override
             public void onSelected(Type type) {
-
+                if(isRowSelected()) {
+                    undoRowSelection();
+                }
             }
         };
 
         LongSelectionCallback<Type> longSelectionCallback = new LongSelectionCallback<Type>() {
             @Override
             public void onSelected(Type selected, View view) {
-                showEditionMenu();
-                showViewSelection(selected, view);
+                if(!isRowSelected()) {
+                    showEditionMenu();
+                }
+                setViewSelection(selected, view);
             }
         };
 
@@ -108,7 +115,7 @@ public class AppTypesActivity extends AppCompatActivity {
         mTypesRecyclerView.setAdapter(adapter);
     }
 
-    private void showViewSelection(Type selected, View view) {
+    private void setViewSelection(Type selected, View view) {
         if(selectedRowChanged(selected)) {
             if(isRowSelected()) {
                 setPreviousSelectedRowOriginalState();
@@ -142,6 +149,7 @@ public class AppTypesActivity extends AppCompatActivity {
     private void showEditionMenu() {
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        AnimationsUtil.expand(getSupportActionBar().getCustomView());
     }
 
     private void startTypeForm() {
@@ -196,11 +204,11 @@ public class AppTypesActivity extends AppCompatActivity {
     }
 
     private void undoRowSelection() {
-        mSelectedType = null;
-        mSelectedTypeView = null;
-        getSupportActionBar().setDisplayShowCustomEnabled(false);
+        AnimationsUtil.collapse(getSupportActionBar().getCustomView());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mSelectedTypeView.setBackground(mRegularRowBackGround);
+        mSelectedType = null;
+        mSelectedTypeView = null;
     }
 
     public void editClicked(View view) {
