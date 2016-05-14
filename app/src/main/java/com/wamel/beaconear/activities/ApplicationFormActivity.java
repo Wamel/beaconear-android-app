@@ -29,6 +29,7 @@ public class ApplicationFormActivity extends AppCompatActivity {
     private ImageView mAppIconImageView;
 
     private RegisteredApplication mApplication;
+    private String mApplicationUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +48,9 @@ public class ApplicationFormActivity extends AppCompatActivity {
         mAppNameEditText.setText(mApplication.getName());
         mAppDescriptionEditText.setText(mApplication.getDescription());
         mActiveSwitch.setChecked(mApplication.isActive());
+        mApplicationUrl = mApplication.getIconUrl();
         if(mApplication.hasIconUrl()) {
-            Picasso.with(this).load(mApplication.getIconUrl()).into(mAppIconImageView);
+            Picasso.with(this).load(mApplicationUrl).into(mAppIconImageView);
         }
     }
 
@@ -130,22 +132,27 @@ public class ApplicationFormActivity extends AppCompatActivity {
 
     private void setApplicationIconUrl(String iconUrl) {
         //TODO post a applications
-        mApplication.setIconUrl(iconUrl);
-        Picasso.with(this).load(mApplication.getIconUrl()).into(mAppIconImageView);
+        mApplicationUrl = iconUrl;
+        if(mApplicationUrl != null && !mApplicationUrl.isEmpty()) {
+            Picasso.with(this).load(mApplicationUrl).into(mAppIconImageView);
+        }
     }
 
     private void submitForm() {
         if(validInputs()) {
-            RegisteredApplication applicationResult = new RegisteredApplication();
+            RegisteredApplication applicationResult;
             if(isEdition()) {
                 mApplication.setName(mAppNameEditText.getText().toString());
                 mApplication.setDescription(mAppDescriptionEditText.getText().toString());
                 mApplication.setActive(mActiveSwitch.isChecked());
+                mApplication.setIconUrl(mApplicationUrl);
                 applicationResult = mApplication;
             } else {
+                applicationResult = new RegisteredApplication();
                 applicationResult.setName(mAppNameEditText.getText().toString());
                 applicationResult.setDescription(mAppDescriptionEditText.getText().toString());
                 applicationResult.setActive(mActiveSwitch.isChecked());
+                applicationResult.setIconUrl(mApplicationUrl);
             }
             //TODO Post a applications
             finishWithAppResult(applicationResult);

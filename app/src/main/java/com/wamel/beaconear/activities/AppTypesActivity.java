@@ -12,9 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.LinearLayout;
 
 import com.wamel.beaconear.R;
 import com.wamel.beaconear.adapters.TypesAdapter;
