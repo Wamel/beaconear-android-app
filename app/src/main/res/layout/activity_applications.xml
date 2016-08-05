@@ -26,4 +26,5 @@
         android:src="@drawable/ic_add"
         android:tint="@color/white"/>
     <include layout="@layout/content_applications"/>
+    
 </android.support.design.widget.CoordinatorLayout>
